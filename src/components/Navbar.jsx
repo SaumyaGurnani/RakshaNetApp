@@ -5,31 +5,35 @@ import { Globe, User } from "lucide-react";
 export default function Navbar({ onLanguageChange }) {
   return (
     <header className="bg-white shadow-sm border-b border-yellow-500">
-      <div className="flex items-center justify-between px-6 py-2 bg-white relative">
+      <div className="flex items-center justify-between pr-6 pt-2 bg-white relative">
         
-        {/* Left - Indian Emblem */}
-        <div className="flex items-center">
+        <div className="flex flex-col items-center gap-5 mr-10">
           <img
             src="/indian-emblem.png"
             alt="Indian Emblem"
-            className="h-12 w-auto"
+            className="h-18"
           />
+          <div class="flex justify-end">
+            <div class="w-15 h-1.5 bg-orange-500"></div>
+            <div class="w-12 h-1.5 bg-white"></div>
+            <div class="w-10 h-1.5 bg-green-600"></div>
+          </div>
         </div>
 
-        {/* Center - RakshaNet Title */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-3">
+        
+        <div className="flex items-center gap-3">
           <img
             src="/government-logo.png"
             alt="Gov Logo"
-            className="h-10 w-auto"
+            className="h-22"
           />
-          <h1 className="text-2xl font-bold text-blue-900">RakshaNet</h1>
+          <h1 className="text-3xl font-bold text-slate-700 mt-2">RakshaNet</h1>
         </div>
 
         {/* Right - Buttons */}
         <div className="flex items-center gap-4">
-          <button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1.5 rounded font-semibold">
-            Login
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 rounded w-40 border-none h-10">
+            Login/लॉगइन
           </button>
           <button
             onClick={() => onLanguageChange(false)}
