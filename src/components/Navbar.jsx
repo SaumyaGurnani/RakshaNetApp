@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import React from "react";
-import { Globe, User, LogOut } from "lucide-react";
+import { Globe, User, LogOut, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Navbar({ onLanguageChange, userData, onLogout }) {
   return (
@@ -32,25 +33,31 @@ export default function Navbar({ onLanguageChange, userData, onLogout }) {
 
         {/* Right - Buttons */}
         <div className="flex items-center gap-4">
-          {/* User Info */}
-          {userData && (
-            <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
-              <User className="h-4 w-4 text-gray-600" />
-              <span className="text-sm font-medium text-gray-700">
-                {userData.name || userData.email}
-              </span>
-            </div>
-          )}
-          
-          {/* Logout Button */}
-          {userData && (
-            <button 
-              onClick={onLogout}
-              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
+          {/* User Info or Login Button */}
+          {userData ? (
+            <>
+              <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                <User className="h-4 w-4 text-gray-600" />
+                <span className="text-sm font-medium text-gray-700">
+                  {userData.name || userData.email}
+                </span>
+              </div>
+              <button 
+                onClick={onLogout}
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
             >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
+              <LogIn className="h-4 w-4" />
+              Login
+            </Link>
           )}
           
           <button

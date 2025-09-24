@@ -1,10 +1,9 @@
 // src/App.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Carousel from "./components/Carousel";
 import EmergencyMarquee from "./components/EmergencyMarquee";
-import Login from "./components/LoginPage";
 import ChatbotModal from "./components/ChatbotModal";
 import { LANG } from './i18n';
 import {
@@ -19,42 +18,17 @@ import {
   FileText,
   Satellite,
 } from "lucide-react";
+import { useAuth } from "./contexts/AuthContext.jsx";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const { currentUser, logout } = useAuth();
   const [isHindi, setIsHindi] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Handle successful login/registration
-  const handleLogin = (userInfo) => {
-    setUserData(userInfo);
-    setIsLoggedIn(true);
-    setIsHindi(userInfo.isHindi || false);
-    console.log("User logged in:", userInfo);
-
-    // Route based on user type
-    if (userInfo.userType === 'authority') {
-      navigate('/authority');
-      return; // Exit early for authority users
-    }
-    // Add other routing conditions for different user types as needed
-    // else if (userInfo.userType === 'volunteer') {
-    //   navigate('/volunteer');
-    //   return;
-    // }
-    // else if (userInfo.userType === 'ngo') {
-    //   navigate('/ngo');
-    //   return;
-    // }
-    // For citizens and other types, stay on current page (dashboard)
-  };
-
   // Handle logout
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUserData(null);
+    logout();
     navigate('/'); // Redirect to home/login page
   };
 
@@ -65,11 +39,6 @@ function App() {
   const handleSosClick = () => {
     navigate('/sos');
   };
-
-  // If not logged in, show login page
-  if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
-  }
 
   // Main dashboard content (existing code) - Only for non-authority users
   const content = {
@@ -216,7 +185,7 @@ function App() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar
         onLanguageChange={handleLanguageChange}
-        userData={userData}
+        userData={currentUser}
         onLogout={handleLogout}
       />
       <EmergencyMarquee isHindi={isHindi} />
@@ -225,32 +194,32 @@ function App() {
         {/* Left Sidebar */}
         <aside className="w-64 bg-blue-900 shadow-lg flex flex-col">
           {/* User Info Section */}
-          {userData && (
+          {currentUser && (
             <div className="p-4 bg-blue-800 text-white border-b border-blue-700">
               <div className="text-sm opacity-90">
                 {isHindi ? "स्वागत" : "Welcome"}
               </div>
               <div className="font-semibold">
-                {userData.name || userData.email}
+                {currentUser.name || currentUser.email}
               </div>
               <div className="text-xs opacity-75 capitalize">
-                {userData.userType === "citizen"
+                {currentUser.userType === "citizen"
                   ? isHindi
                     ? "नागरिक"
                     : "Citizen"
-                  : userData.userType === "authority"
+                  : currentUser.userType === "authority"
                   ? isHindi
                     ? "प्राधिकरण"
                     : "Authority"
-                  : userData.userType === "volunteer"
+                  : currentUser.userType === "volunteer"
                   ? isHindi
                     ? "स्वयंसेवक"
                     : "Volunteer"
-                  : userData.userType === "ngo"
+                  : currentUser.userType === "ngo"
                   ? isHindi
                     ? "एनजीओ"
                     : "NGO"
-                  : userData.userType}
+                  : currentUser.userType}
               </div>
             </div>
           )}

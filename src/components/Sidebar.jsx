@@ -1,8 +1,9 @@
 // src/components/Sidebar.jsx
 
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // 1. Import useNavigate
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiUser } from "react-icons/fi";
+import { useAuth } from "../contexts/AuthContext.jsx";
 
 const menuItems = [
   { to: '/authority', label: "Dashboard", icon: <FiHome /> },
@@ -15,12 +16,11 @@ const menuItems = [
 
 export default function Sidebar() {
   const location = useLocation();
-  const navigate = useNavigate(); // 2. Initialize the navigate function
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  // 3. Create a function to handle the logout action
   const handleLogout = () => {
-    // In a real app, you would clear user session/token here
-    console.log("Logging out...");
+    logout(); // Call the actual logout function from context
     navigate('/'); // Navigate to the landing page
   };
 
@@ -48,7 +48,6 @@ export default function Sidebar() {
           <FiHelpCircle className="text-lg" />
           <span className="text-sm font-medium">Help / Support</span>
         </button>
-        {/* 4. Add the onClick handler to the logout button */}
         <button 
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-blue-800/70 text-blue-100"

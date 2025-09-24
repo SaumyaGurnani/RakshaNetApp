@@ -3,26 +3,16 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import AlertMarquee from "../../components/AlertMarquee";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export default function AuthorityLayout() {
   const [isHindi, setIsHindi] = useState(false);
   const navigate = useNavigate();
-
-  // Mock user data - in a real app, this would come from context or props
-  const userData = {
-    name: "NDRF Unit 7B",
-    userType: "authority",
-    department: "National Disaster Response Force",
-    jurisdiction: "Delhi NCR"
-  };
+  const { currentUser, logout } = useAuth();
 
   const handleLogout = () => {
-    // Clear any stored user data
-    localStorage.removeItem('userData');
-    sessionStorage.removeItem('userData');
-    
-    // Navigate back to login
-    navigate('/');
+    logout(); // Call the actual logout function from context
+    navigate('/'); // Navigate back to home
   };
 
   const handleLanguageChange = (hindi) => {
@@ -33,7 +23,7 @@ export default function AuthorityLayout() {
     <div className="h-screen bg-slate-100 flex flex-col">
       <Navbar 
         onLanguageChange={handleLanguageChange}
-        userData={userData}
+        userData={currentUser} // Pass the actual user data
         onLogout={handleLogout}
       />
       <AlertMarquee isHindi={isHindi} />

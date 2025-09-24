@@ -3,8 +3,10 @@ import { Globe, Shield, Building2, Users, Eye, EyeOff } from "lucide-react";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/config"; // Adjust path as needed
+import { useNavigate } from "react-router-dom";
 
-export default function LoginPage({ onLogin }) {
+export default function LoginPage() {
+  const navigate = useNavigate();
   const [isHindi, setIsHindi] = useState(true);
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState('citizen');
@@ -210,23 +212,11 @@ export default function LoginPage({ onLogin }) {
       // Get additional user data from Firestore
       const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
       
-      let userData;
-      if (userDoc.exists()) {
-        userData = {
-          uid: userCredential.user.uid,
-          email: userCredential.user.email,
-          ...userDoc.data()
-        };
+      if (userDoc.exists() && userDoc.data().userType === 'authority') {
+        navigate('/authority');
       } else {
-        userData = {
-          uid: userCredential.user.uid,
-          email: userCredential.user.email,
-          name: userCredential.user.email,
-          userType: userType
-        };
+        navigate('/');
       }
-
-      onLogin(userData);
       
     } catch (err) {
       console.error("Login error:", err);
@@ -297,7 +287,12 @@ export default function LoginPage({ onLogin }) {
       };
 
       await setDoc(doc(db, 'users', userCredential.user.uid), userData);
-      onLogin(userData);
+      
+      if (userData.userType === 'authority') {
+        navigate('/authority');
+      } else {
+        navigate('/');
+      }
 
     } catch (err) {
       console.error("Registration error:", err);
