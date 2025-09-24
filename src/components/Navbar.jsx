@@ -4,11 +4,24 @@ import { Globe, User } from "lucide-react";
 export default function Navbar({ onLanguageChange }) {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="flex items-center justify-between px-6 py-2">
-        <div className="flex items-center gap-4">
-          <img src="/indian-emblem.png" alt="Indian Emblem" className="h-14"/>
-          <img src="/government-logo.png" alt="Gov Logo" className="h-14"/>
-          <h1 className="text-3xl font-bold text-slate-800 mt-1">RakshaNet</h1>
+      <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center">
+          <div className="flex justify-between gap-5 mx-7 my-1 mb-5">
+            <img
+            src="/indian-emblem.png"
+            alt="Indian Emblem"
+            className="h-13"
+            />
+            <img src="/government-logo.png" alt="Gov Logo" className="h-14"/>
+          </div>
+            
+          <div className="flex justify-end absolute mt-19">
+            <div className="w-19 h-1.5 bg-orange-500"></div>
+            <div className="w-15 h-1.5 bg-white"></div>
+            <div className="w-12 h-1.5 bg-green-600"></div>
+          </div>
+          
+          <h1 className="text-4xl font-bold text-slate-800">RakshaNet</h1>
         </div>
         <div className="flex items-center gap-5">
           <img src="/ndrf_logo_png.png" alt="NDRF Logo" className="h-14"/>
