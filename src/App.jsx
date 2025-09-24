@@ -1,10 +1,12 @@
 // src/App.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Carousel from "./components/Carousel";
 import EmergencyMarquee from "./components/EmergencyMarquee";
 import Login from "./components/LoginPage";
+import ChatbotModal from "./components/ChatbotModal";
+import { LANG } from './i18n';
 import {
   MessageCircle,
   Home,
@@ -17,34 +19,51 @@ import {
   FileText,
   Satellite,
 } from "lucide-react";
-import ChatbotModal from "./components/ChatbotModal";
-import { LANG } from './i18n';
 
-export default function App() {
-   const [isLoggedIn, setIsLoggedIn] = useState(false);
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isHindi, setIsHindi] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLanguageChange = (hindi) => {
-    setIsHindi(hindi);
-  };
-  
-  const handleSosClick = () => {
-    navigate('/sos');
-  };
-   const handleLogin = (userInfo) => {
+  // Handle successful login/registration
+  const handleLogin = (userInfo) => {
     setUserData(userInfo);
     setIsLoggedIn(true);
     setIsHindi(userInfo.isHindi || false);
     console.log("User logged in:", userInfo);
+
+    // Route based on user type
+    if (userInfo.userType === 'authority') {
+      navigate('/authority');
+      return; // Exit early for authority users
+    }
+    // Add other routing conditions for different user types as needed
+    // else if (userInfo.userType === 'volunteer') {
+    //   navigate('/volunteer');
+    //   return;
+    // }
+    // else if (userInfo.userType === 'ngo') {
+    //   navigate('/ngo');
+    //   return;
+    // }
+    // For citizens and other types, stay on current page (dashboard)
   };
 
   // Handle logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserData(null);
+    navigate('/'); // Redirect to home/login page
+  };
+
+  const handleLanguageChange = (hindi) => {
+    setIsHindi(hindi);
+  };
+
+  const handleSosClick = () => {
+    navigate('/sos');
   };
 
   // If not logged in, show login page
@@ -52,16 +71,17 @@ export default function App() {
     return <Login onLogin={handleLogin} />;
   }
 
+  // Main dashboard content (existing code) - Only for non-authority users
   const content = {
     english: {
       menuItems: [
-        { icon: Home, label: "Dashboard", active: true },
+        { icon: Home, label: "Home", active: true },
         { icon: AlertTriangle, label: "Alerts", active: false },
-        { icon: Map, label: "Maps", active: false },
+        { icon: Settings, label: "Our Services", active: false },
       ],
       sosButton: "SOS - Emergency",
       emergencyContacts: "Emergency Contacts",
-     satelliteImages: "Satellite Images - Indian Disasters",
+      satelliteImages: "Satellite Images - Indian Disasters",
       dashboardCards: {
         alerts: { title: "Active Alerts", desc: "High, Medium" },
         teams: { title: "Response Teams", desc: "Currently Deployed" },
@@ -182,7 +202,8 @@ export default function App() {
   };
 
   const current = isHindi ? content.hindi : content.english;
-const getSeverityColor = (severity) => {
+
+  const getSeverityColor = (severity) => {
     const sev = severity.toLowerCase();
     if (sev === "high" || sev === "उच्च")
       return "bg-red-100 text-red-800 border-red-200";
@@ -190,16 +211,20 @@ const getSeverityColor = (severity) => {
       return "bg-orange-100 text-orange-800 border-orange-200";
     return "bg-green-100 text-green-800 border-green-200";
   };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 relative">
-      <Navbar onLanguageChange={handleLanguageChange}
-       userData={userData}
-        onLogout={handleLogout} />
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Navbar
+        onLanguageChange={handleLanguageChange}
+        userData={userData}
+        onLogout={handleLogout}
+      />
       <EmergencyMarquee isHindi={isHindi} />
 
       <div className="flex flex-1">
+        {/* Left Sidebar */}
         <aside className="w-64 bg-blue-900 shadow-lg flex flex-col">
-            {/* User Info Section */}
+          {/* User Info Section */}
           {userData && (
             <div className="p-4 bg-blue-800 text-white border-b border-blue-700">
               <div className="text-sm opacity-90">
@@ -229,6 +254,7 @@ const getSeverityColor = (severity) => {
               </div>
             </div>
           )}
+
           {/* Sidebar Menu */}
           <div className="p-4 space-y-2">
             {current.menuItems.map((item, index) => {
@@ -249,14 +275,16 @@ const getSeverityColor = (severity) => {
             })}
           </div>
 
+          {/* SOS Button */}
           <div className="p-4">
             <button 
               onClick={handleSosClick}
-              className="w-full py-3 bg-red-700 hover:bg-red-800 rounded font-bold text-lg transition-colors"
+              className="w-full py-3 bg-red-700 hover:bg-red-800 rounded font-bold text-lg transition-colors text-white"
             >
               🆘 {current.sosButton}
             </button>
           </div>
+
           {/* Emergency Contacts */}
           <div className="mt-auto p-4 bg-blue-900 text-white">
             <h3 className="font-semibold mb-2 flex items-center gap-2">
@@ -270,9 +298,11 @@ const getSeverityColor = (severity) => {
             </div>
           </div>
         </aside>
-             {/* Main Content */}
-        <main className="flex-1 p-6">
+
+        {/* Main Content */}
+        <main className="flex-1 p-6 space-y-6">
           <Carousel />
+
           {/* Satellite Images Section */}
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
@@ -295,14 +325,22 @@ const getSeverityColor = (severity) => {
             </div>
           </div>
         </main>
-                   {/* Right Panel - Live Updates */}
+
+        {/* Right Panel - Live Updates */}
         <aside className="w-80 bg-white shadow-lg border-l border-gray-200">
-           <div className="p-6">
-            <h2 className="text-lg font-bold mb-4 text-gray-800 border-b pb-2">{current.liveUpdates}</h2>
+          <div className="p-6">
+            <h2 className="text-lg font-bold mb-4 text-gray-800 border-b pb-2">
+              {current.liveUpdates}
+            </h2>
             <div className="space-y-4">
               {current.updates.map((update, index) => (
-                <div key={index} className="border-l-4 pl-3 py-2 border-blue-400 bg-blue-50">
-                  <p className="text-sm font-semibold text-blue-800">{update.type}</p>
+                <div
+                  key={index}
+                  className="border-l-4 pl-3 py-2 border-blue-400 bg-blue-50"
+                >
+                  <p className="text-sm font-semibold text-blue-800">
+                    {update.type}
+                  </p>
                   <p className="text-xs text-blue-600">{update.msg}</p>
                   <p className="text-xs text-gray-500">{update.time}</p>
                 </div>
@@ -312,6 +350,7 @@ const getSeverityColor = (severity) => {
         </aside>
       </div>
 
+      {/* Floating Chatbot Button */}
       <button
         onClick={() => setIsChatbotOpen(true)}
         className="fixed bottom-6 right-6 bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transition-transform transform hover:scale-110"
@@ -320,6 +359,7 @@ const getSeverityColor = (severity) => {
         <MessageCircle size={32} />
       </button>
 
+      {/* Chatbot Modal */}
       <ChatbotModal
         isChatbotOpen={isChatbotOpen}
         closeChatbot={() => setIsChatbotOpen(false)}
@@ -329,3 +369,5 @@ const getSeverityColor = (severity) => {
     </div>
   );
 }
+
+export default App;
