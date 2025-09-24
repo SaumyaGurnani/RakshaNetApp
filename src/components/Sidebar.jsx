@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom"; // 1. Import useNavigate
-import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiRadio, FiUser } from "react-icons/fi";
+import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiUser } from "react-icons/fi";
 
 const menuItems = [
   { to: '/authority', label: "Dashboard", icon: <FiHome /> },

@@ -1,8 +1,10 @@
-// src/pages/authorityView/Dashboard.jsx
+// src/pages/authorityView/HomeDashboard.jsx
 
 import React, { useState } from "react";
 import StatsCards from "../../components/StatsCards";
+import { FiAlertOctagon } from "react-icons/fi";
 
+// --- Data ---
 const myAuthorityData = [
   { id: "R-7781", status: "Pending", priority: "High", area: "Sector 15" },
   { id: "R-7780", status: "In Progress", priority: "High", area: "Sector 12" },
@@ -18,14 +20,41 @@ const allAuthoritiesData = [
   { id: "R-7779", status: "Completed", priority: "Medium", area: "Sector 15 (Unit 7B)" },
 ];
 
-export default function AuthorityDashboard() {
+const sosRequests = [
+  { id: 'SOS-981', location: 'Rohini, Sector 24', details: 'Stranded family, requires immediate water rescue.', priority: 'Critical' },
+  { id: 'SOS-980', location: 'Karol Bagh Market', details: 'Medical emergency, requires paramedic.', priority: 'High' },
+];
+
+
+export default function HomeDashboard() {
   const [activeTable, setActiveTable] = useState('my');
 
   return (
-    <>
+    <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Welcome, NDRF Unit 7B</h2>
         <StatsCards />
+      </div>
+
+      {/* --- NEW SOS REQUESTS SECTION --- */}
+      <div className="bg-white p-6 rounded-xl border border-slate-200">
+        <h2 className="text-lg font-bold text-red-600 flex items-center gap-2">
+          <FiAlertOctagon />
+          Active SOS Requests (Unit 7B)
+        </h2>
+        <div className="mt-4 space-y-4">
+          {sosRequests.map(req => (
+            <div key={req.id} className="p-4 rounded-lg bg-red-50 border border-red-200 flex items-start justify-between">
+              <div>
+                <p className="font-bold text-slate-800">{req.location} <span className="text-sm font-medium text-red-700 ml-2">({req.priority})</span></p>
+                <p className="text-sm text-slate-600 mt-1">{req.details}</p>
+              </div>
+              <button className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">
+                Acknowledge
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -86,6 +115,7 @@ export default function AuthorityDashboard() {
             </div>
           </div>
         </div>
+
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <div className="font-semibold text-slate-900 mb-3">Live Operations & Alerts</div>
           <div className="space-y-4">
@@ -108,6 +138,6 @@ export default function AuthorityDashboard() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
