@@ -7,8 +7,8 @@ import './index.css';
 
 import App from './App.jsx';
 import AuthorityLayout from './pages/authorityView/Layout.jsx';
-import HomeDashboard from './pages/authorityView/HomeDashboard.jsx'; // 1. Import HomeDashboard
-import UnitDashboard from './pages/authorityView/UnitDashboard.jsx';   // 2. Import UnitDashboard
+import HomeDashboard from './pages/authorityView/HomeDashboard.jsx';
+import UnitOperations from './pages/authorityView/UnitOperations.jsx'; // 1. Import UnitOperations
 import AuthorityLiveUpdates from './pages/authorityView/liveupdates.jsx';
 import AuthorityAnalytics from './pages/authorityView/Analytics.jsx';
 import AuthorityMapView from './pages/authorityView/mapView.jsx';
@@ -21,10 +21,8 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/authority" element={<AuthorityLayout />}>
-          {/* 3. The index route is now the HomeDashboard */}
-          <Route index element={<HomeDashboard />} /> 
-          {/* 4. Add the new route for the UnitDashboard */}
-          <Route path="unit-dashboard" element={<UnitDashboard />} /> 
+          <Route index element={<HomeDashboard />} />
+          <Route path="unit-operations" element={<UnitOperations />} /> {/* 2. Add the new route */}
           <Route path="live-updates" element={<AuthorityLiveUpdates />} />
           <Route path="analytics" element={<AuthorityAnalytics />} />
           <Route path="map-view" element={<AuthorityMapView />} />

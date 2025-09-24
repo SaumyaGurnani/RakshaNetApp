@@ -5,10 +5,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiRadio, FiUser } from "react-icons/fi";
 
 const menuItems = [
-  // 1. The first link is "Dashboard" and points to the home of the authority section
   { to: '/authority', label: "Dashboard", icon: <FiHome /> },
-  // 2. Add a new link for the "Unit Dashboard"
-  { to: '/authority/unit-dashboard', label: "Unit Operations", icon: <FiUser /> },
+  // Corrected the label and path for the new page
+  { to: '/authority/unit-operations', label: "Unit Operations", icon: <FiUser /> }, 
   { to: '/authority/ongoing-ops', label: "Ongoing Operations", icon: <FiActivity /> },
   { to: '/authority/map-view', label: "Map View", icon: <FiMap /> },
   { to: '/authority/live-updates', label: "Live Updates", icon: <FiRadio /> },
