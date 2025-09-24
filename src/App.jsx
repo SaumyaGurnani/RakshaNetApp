@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState } from "react";
-import Navbar from "./components/Navbar";
+import Navbar_main from "./components/Navbar_main";
 import Carousel from "./components/Carousel";
 import EmergencyMarquee from "./components/EmergencyMarquee";
 import { MessageCircle, Home, AlertTriangle, Map, Users, Phone } from "lucide-react";
@@ -73,7 +73,7 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Navbar onLanguageChange={handleLanguageChange} />
+      <Navbar_main onLanguageChange={handleLanguageChange} />
       <EmergencyMarquee isHindi={isHindi} />
 
       <div className="flex flex-1">

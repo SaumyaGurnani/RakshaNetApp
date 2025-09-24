@@ -35,15 +35,7 @@ export default function EmergencyMarquee({ isHindi = false }) {
           {alertText} • {alertText}
         </span>
       </div>
-      <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
-        .animate-marquee {
-          animation: marquee 45s linear infinite;
-        }
-      `}</style>
+     
     </div>
   );
 }
