@@ -15,7 +15,7 @@ export default function Navbar({ onLanguageChange }) {
             <img src="/government-logo.png" alt="Gov Logo" className="h-14"/>
           </div>
             
-          <div className="flex justify-end absolute mt-19">
+          <div className="flex justify-end absolute mt-[79px]">
             <div className="w-19 h-1.5 bg-orange-500"></div>
             <div className="w-15 h-1.5 bg-white"></div>
             <div className="w-12 h-1.5 bg-green-600"></div>

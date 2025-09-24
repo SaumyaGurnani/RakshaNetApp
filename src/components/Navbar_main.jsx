@@ -9,27 +9,23 @@ export default function Navbar_main({ onLanguageChange }) {
     <header className="bg-white shadow-sm border-b border-yellow-500">
       <div className="flex items-center justify-between pr-6 pt-2 bg-white relative">
         
-        <div className="flex flex-col items-center gap-5 mr-10">
-          <img
+        <div className="flex items-center">
+          <div className="flex justify-between gap-5 mx-7 mt-2 mb-5">
+            <img
             src="/indian-emblem.png"
             alt="Indian Emblem"
-            className="h-18"
-          />
-          <div className="flex justify-end">
-            <div className="w-15 h-1.5 bg-orange-500"></div>
-            <div className="w-12 h-1.5 bg-white"></div>
-            <div className="w-10 h-1.5 bg-green-600"></div>
+            className="h-13"
+            />
+            <img src="/government-logo.png" alt="Gov Logo" className="h-14"/>
           </div>
-        </div>
-
-        
-        <div className="flex items-center gap-3">
-          <img
-            src="/government-logo.png"
-            alt="Gov Logo"
-            className="h-22"
-          />
-          <h1 className="text-3xl font-bold text-slate-700 mt-2">RakshaNet</h1>
+            
+          <div className="flex justify-end absolute mt-[78px]">
+            <div className="w-19 h-1.5 bg-orange-500"></div>
+            <div className="w-15 h-1.5 bg-white"></div>
+            <div className="w-12 h-1.5 bg-green-600"></div>
+          </div>
+          
+          <h1 className="text-4xl font-bold text-slate-800">RakshaNet</h1>
         </div>
 
         <div className="flex items-center gap-4">
