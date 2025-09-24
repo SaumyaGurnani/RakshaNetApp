@@ -141,11 +141,10 @@ const AuthorityPanel = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 font-sans antialiased">
-      {/* Header */}
       <header className="flex justify-between items-center p-4 bg-white shadow-lg rounded-lg">
-        <div>
-          
+        <div className='flex gap-5'>
           <h1 className="text-2xl text-amber-950">NDRF – Delhi Zone</h1>
+          <img src="/ndrf_logo_png.png" alt="NDRF Logo" className="h-10"/>
         </div>
         <div className="relative">
           <button className="text-gray-500 hover:text-gray-700 focus:outline-none">

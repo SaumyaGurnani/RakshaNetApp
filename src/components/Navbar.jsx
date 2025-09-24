@@ -3,10 +3,10 @@ import { Globe, User } from "lucide-react";
 
 export default function Navbar({ onLanguageChange }) {
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className="bg-white shadow-sm border-b border-gray-200 pr-4">
       <div className="flex items-center justify-between pt-1">
         <div className="flex items-center">
-          <div className="flex justify-between gap-5 mx-7 my-1 mb-5">
+          <div className="flex justify-between gap-5 mx-7 mt-2 mb-5">
             <img
             src="/indian-emblem.png"
             alt="Indian Emblem"
