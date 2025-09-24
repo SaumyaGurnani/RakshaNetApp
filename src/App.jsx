@@ -4,35 +4,87 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Carousel from "./components/Carousel";
 import EmergencyMarquee from "./components/EmergencyMarquee";
-import { MessageCircle, Home, AlertTriangle, Map, Users, Phone } from "lucide-react";
+import Login from "./components/LoginPage";
+import {
+  MessageCircle,
+  Home,
+  AlertTriangle,
+  Map,
+  Users,
+  Phone,
+  Settings,
+  Headphones,
+  FileText,
+  Satellite,
+} from "lucide-react";
+import ChatbotModal from "./components/ChatbotModal";
+import { LANG } from './i18n';
 
-function App() {
+export default function App() {
+   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [isHindi, setIsHindi] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLanguageChange = (hindi) => setIsHindi(hindi);
+  const handleLanguageChange = (hindi) => {
+    setIsHindi(hindi);
+  };
+  
+  const handleSosClick = () => {
+    navigate('/sos');
+  };
+   const handleLogin = (userInfo) => {
+    setUserData(userInfo);
+    setIsLoggedIn(true);
+    setIsHindi(userInfo.isHindi || false);
+    console.log("User logged in:", userInfo);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserData(null);
+  };
+
+  // If not logged in, show login page
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   const content = {
     english: {
       menuItems: [
-        { icon: Home, label: "Home", active: true },
+        { icon: Home, label: "Dashboard", active: true },
         { icon: AlertTriangle, label: "Alerts", active: false },
-        { icon: Settings, label: "Our Services", active: false },
+        { icon: Map, label: "Maps", active: false },
       ],
       sosButton: "SOS - Emergency",
       emergencyContacts: "Emergency Contacts",
+     satelliteImages: "Satellite Images - Indian Disasters",
       dashboardCards: {
         alerts: { title: "Active Alerts", desc: "High, Medium" },
         teams: { title: "Response Teams", desc: "Currently Deployed" },
         rescued: { title: "People Rescued", desc: "Last 24 hours" },
-        camps: { title: "Relief Camps", desc: "Operational" }
+        camps: { title: "Relief Camps", desc: "Operational" },
       },
       currentStatus: "Current Disaster Status",
       statusItems: [
-        { title: "Cyclone Warning", desc: "Eastern Coast - Odisha & Andhra Pradesh", level: "HIGH" },
-        { title: "Heavy Rainfall Alert", desc: "Kerala, Karnataka - Next 48 hours", level: "MEDIUM" },
-        { title: "Flood Monitoring", desc: "River levels - Yamuna, Ganga systems", level: "WATCH" }
+        {
+          title: "Cyclone Warning",
+          desc: "Eastern Coast - Odisha & Andhra Pradesh",
+          level: "HIGH",
+        },
+        {
+          title: "Heavy Rainfall Alert",
+          desc: "Kerala, Karnataka - Next 48 hours",
+          level: "MEDIUM",
+        },
+        {
+          title: "Flood Monitoring",
+          desc: "River levels - Yamuna, Ganga systems",
+          level: "WATCH",
+        },
       ],
       liveUpdates: "Live Updates",
       updates: [
@@ -72,17 +124,30 @@ function App() {
       ],
       sosButton: "एसओएस - आपातकाल",
       emergencyContacts: "आपातकालीन संपर्क",
+      satelliteImages: "उपग्रह चित्र - भारतीय आपदाएं",
       dashboardCards: {
         alerts: { title: "सक्रिय अलर्ट", desc: "उच्च, मध्यम" },
         teams: { title: "प्रतिक्रिया दल", desc: "वर्तमान में तैनात" },
         rescued: { title: "बचाए गए लोग", desc: "पिछले 24 घंटे" },
-        camps: { title: "राहत शिविर", desc: "परिचालन में" }
+        camps: { title: "राहत शिविर", desc: "परिचालन में" },
       },
       currentStatus: "वर्तमान आपदा स्थिति",
       statusItems: [
-        { title: "चक्रवात चेतावनी", desc: "पूर्वी तट - ओडिशा और आंध्र प्रदेश", level: "उच्च" },
-        { title: "भारी बारिश अलर्ट", desc: "केरल, कर्नाटक - अगले 48 घंटे", level: "मध्यम" },
-        { title: "बाढ़ निगरानी", desc: "नदी स्तर - यमुना, गंगा सिस्टम", level: "निगरानी" }
+        {
+          title: "चक्रवात चेतावनी",
+          desc: "पूर्वी तट - ओडिशा और आंध्र प्रदेश",
+          level: "उच्च",
+        },
+        {
+          title: "भारी बारिश अलर्ट",
+          desc: "केरल, कर्नाटक - अगले 48 घंटे",
+          level: "मध्यम",
+        },
+        {
+          title: "बाढ़ निगरानी",
+          desc: "नदी स्तर - यमुना, गंगा सिस्टम",
+          level: "निगरानी",
+        },
       ],
       liveUpdates: "लाइव अपडेट",
       updates: [
@@ -117,8 +182,7 @@ function App() {
   };
 
   const current = isHindi ? content.hindi : content.english;
-
-  const getSeverityColor = (severity) => {
+const getSeverityColor = (severity) => {
     const sev = severity.toLowerCase();
     if (sev === "high" || sev === "उच्च")
       return "bg-red-100 text-red-800 border-red-200";
@@ -126,21 +190,45 @@ function App() {
       return "bg-orange-100 text-orange-800 border-orange-200";
     return "bg-green-100 text-green-800 border-green-200";
   };
-
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Navbar_main onLanguageChange={handleLanguageChange} />
+    <div className="flex flex-col min-h-screen bg-gray-50 relative">
+      <Navbar onLanguageChange={handleLanguageChange}
+       userData={userData}
+        onLogout={handleLogout} />
       <EmergencyMarquee isHindi={isHindi} />
 
       <div className="flex flex-1">
         <aside className="w-64 bg-blue-900 shadow-lg flex flex-col">
-          {/* SOS Button */}
-          <div className="p-4">
-            <button className="w-full py-3 bg-red-700 hover:bg-red-800 rounded font-bold text-lg transition-colors">
-              🆘 {current.sosButton}
-            </button>
-          </div>
-
+            {/* User Info Section */}
+          {userData && (
+            <div className="p-4 bg-blue-800 text-white border-b border-blue-700">
+              <div className="text-sm opacity-90">
+                {isHindi ? "स्वागत" : "Welcome"}
+              </div>
+              <div className="font-semibold">
+                {userData.name || userData.email}
+              </div>
+              <div className="text-xs opacity-75 capitalize">
+                {userData.userType === "citizen"
+                  ? isHindi
+                    ? "नागरिक"
+                    : "Citizen"
+                  : userData.userType === "authority"
+                  ? isHindi
+                    ? "प्राधिकरण"
+                    : "Authority"
+                  : userData.userType === "volunteer"
+                  ? isHindi
+                    ? "स्वयंसेवक"
+                    : "Volunteer"
+                  : userData.userType === "ngo"
+                  ? isHindi
+                    ? "एनजीओ"
+                    : "NGO"
+                  : userData.userType}
+              </div>
+            </div>
+          )}
           {/* Sidebar Menu */}
           <div className="p-4 space-y-2">
             {current.menuItems.map((item, index) => {
@@ -161,6 +249,14 @@ function App() {
             })}
           </div>
 
+          <div className="p-4">
+            <button 
+              onClick={handleSosClick}
+              className="w-full py-3 bg-red-700 hover:bg-red-800 rounded font-bold text-lg transition-colors"
+            >
+              🆘 {current.sosButton}
+            </button>
+          </div>
           {/* Emergency Contacts */}
           <div className="mt-auto p-4 bg-blue-900 text-white">
             <h3 className="font-semibold mb-2 flex items-center gap-2">
@@ -174,11 +270,9 @@ function App() {
             </div>
           </div>
         </aside>
-
-        {/* Main Content */}
+             {/* Main Content */}
         <main className="flex-1 p-6">
           <Carousel />
-
           {/* Satellite Images Section */}
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
@@ -201,20 +295,14 @@ function App() {
             </div>
           </div>
         </main>
-
-        {/* Right Panel - Only Live Updates */}
+                   {/* Right Panel - Live Updates */}
         <aside className="w-80 bg-white shadow-lg border-l border-gray-200">
-          <div className="p-6">
+           <div className="p-6">
             <h2 className="text-lg font-bold mb-4 text-gray-800 border-b pb-2">{current.liveUpdates}</h2>
             <div className="space-y-4">
               {current.updates.map((update, index) => (
-                <div
-                  key={index}
-                  className="border-l-4 pl-3 py-2 border-blue-400 bg-blue-50"
-                >
-                  <p className="text-sm font-semibold text-blue-800">
-                    {update.type}
-                  </p>
+                <div key={index} className="border-l-4 pl-3 py-2 border-blue-400 bg-blue-50">
+                  <p className="text-sm font-semibold text-blue-800">{update.type}</p>
                   <p className="text-xs text-blue-600">{update.msg}</p>
                   <p className="text-xs text-gray-500">{update.time}</p>
                 </div>
@@ -241,5 +329,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
