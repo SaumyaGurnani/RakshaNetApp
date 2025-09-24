@@ -10,8 +10,8 @@ import App from './App.jsx';
 
 // Import the Authority section's layout and pages
 import AuthorityLayout from './pages/authorityView/Layout.jsx';
-import AuthorityDashboard from './pages/authorityView/dashboard.jsx';
-import AuthorityLiveUpdates from './pages/authorityView/liveupdates.jsx';
+import AuthorityDashboard from './pages/authorityView/Dashboard.jsx';
+import AuthorityPanel from './pages/authorityView/authorityPanel.jsx';
 import AuthorityAnalytics from './pages/authorityView/Analytics.jsx';
 import AuthorityMapView from './pages/authorityView/mapView.jsx';
 import AuthorityOngoingOps from './pages/authorityView/ongoingOperations.jsx';
@@ -27,7 +27,7 @@ createRoot(document.getElementById('root')).render(
         {/* Route 2: The entire authority section, nested under "/authority" */}
         <Route path="/authority" element={<AuthorityLayout />}>
           <Route index element={<AuthorityDashboard />} />
-          <Route path="live-updates" element={<AuthorityLiveUpdates />} />
+          <Route path="authority-panel" element={<AuthorityPanel />} />
           <Route path="analytics" element={<AuthorityAnalytics />} />
           <Route path="map-view" element={<AuthorityMapView />} />
           <Route path="ongoing-ops" element={<AuthorityOngoingOps />} />

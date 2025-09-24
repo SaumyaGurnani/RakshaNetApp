@@ -2,13 +2,13 @@
 
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom"; // 1. Import useNavigate
-import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiRadio } from "react-icons/fi";
+import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiRadio, FiUser } from "react-icons/fi";
 
 const menuItems = [
   { to: '/authority', label: "Dashboard", icon: <FiHome /> },
+  { to: '/authority/authority-panel', label: "Authority Panel", icon: <FiUser /> },
   { to: '/authority/ongoing-ops', label: "Ongoing Operations", icon: <FiActivity /> },
   { to: '/authority/map-view', label: "Map View", icon: <FiMap /> },
-  { to: '/authority/live-updates', label: "Live Updates", icon: <FiRadio /> },
   { to: '/authority/authority-overview', label: "Authority Overview", icon: <FiShield /> },
   { to: '/authority/analytics', label: "Reports & Analytics", icon: <FiBarChart2 /> },
 ];

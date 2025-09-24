@@ -43,7 +43,7 @@ export default function AuthorityDashboard() {
               <button
                 onClick={() => setActiveTable('all')}
                 className={`text-sm transition-colors cursor-pointer ${
-                  activeTable === 'all' ? 'font-medium text-slate-800' : 'text-slate-500 hover:text-slate-700'
+                  activeTable === 'all' ? 'font-medium text-slate-700' : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 All Authorities
