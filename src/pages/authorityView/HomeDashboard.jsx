@@ -18,7 +18,7 @@ const allAuthoritiesData = [
   { id: "R-7779", status: "Completed", priority: "Medium", area: "Sector 15 (Unit 7B)" },
 ];
 
-export default function AuthorityDashboard() {
+export default function HomeDashboard() {
   const [activeTable, setActiveTable] = useState('my');
 
   return (

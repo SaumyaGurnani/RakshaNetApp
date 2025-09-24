@@ -4,7 +4,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { FiClock, FiUsers, FiClipboard, FiAlertTriangle } from 'react-icons/fi';
 
-// --- Imaginary Data for Charts ---
+// --- Imaginary Data for Charts (remains the same) ---
 const requestTypeData = [
   { name: 'Medical', value: 400 },
   { name: 'Rescue', value: 300 },
@@ -35,7 +35,25 @@ const kpiData = [
     { title: 'Total Personnel Deployed', value: '112', icon: <FiUsers/>, color: 'text-green-500' },
     { title: 'Open High-Priority Cases', value: '18', icon: <FiAlertTriangle/>, color: 'text-red-500' },
     { title: 'Total Operations Logged', value: '287', icon: <FiClipboard/>, color: 'text-yellow-500' },
-]
+];
+
+// --- NEW CUSTOM LABEL FUNCTION ---
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.25; // Position label outside the pie
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text x={x} y={y} fill="#333" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={14}>
+      <tspan x={x} dy="-0.5em">{name}</tspan>
+      <tspan x={x} dy="1.2em" fill="#666" fontWeight="bold">
+        {`${(percent * 100).toFixed(0)}%`}
+      </tspan>
+    </text>
+  );
+};
+
 
 export default function AuthorityAnalytics() {
   return (
@@ -61,8 +79,18 @@ export default function AuthorityAnalytics() {
         <div className="bg-white p-6 rounded-xl border border-slate-200">
           <h2 className="text-lg font-bold text-slate-800">Request Types Breakdown</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={requestTypeData} cx="50%" cy="50%" labelLine={false} outerRadius={100} fill="#8884d8" dataKey="value" nameKey="name" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+            <PieChart margin={{ top: 20, right: 30, left: 30, bottom: 20 }}>
+              {/* UPDATED PIE COMPONENT */}
+              <Pie 
+                data={requestTypeData} 
+                cx="50%" 
+                cy="50%" 
+                labelLine={false} // Hide the default line
+                label={renderCustomizedLabel} // Use our custom label function
+                outerRadius={100} 
+                fill="#8884d8" 
+                dataKey="value"
+              >
                 {requestTypeData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -97,7 +125,7 @@ export default function AuthorityAnalytics() {
             <BarChart data={unitPerformanceData} layout="vertical" margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
-                <YAxis dataKey="unit" type="category" />
+                <YAxis dataKey="unit" type="category" width={80} />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="avgTime" fill="#8884d8" name="Avg. Response Time (min)" />

@@ -1,27 +1,28 @@
 // src/components/Sidebar.jsx
 
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // 1. Import useNavigate
-import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiRadio } from "react-icons/fi";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiRadio, FiUser } from "react-icons/fi";
 
 const menuItems = [
+  // 1. The first link is "Dashboard" and points to the home of the authority section
   { to: '/authority', label: "Dashboard", icon: <FiHome /> },
+  // 2. Add a new link for the "Unit Dashboard"
+  { to: '/authority/unit-dashboard', label: "Unit Operations", icon: <FiUser /> },
   { to: '/authority/ongoing-ops', label: "Ongoing Operations", icon: <FiActivity /> },
   { to: '/authority/map-view', label: "Map View", icon: <FiMap /> },
   { to: '/authority/live-updates', label: "Live Updates", icon: <FiRadio /> },
-  { to: '/authority/authority-overview', label: "Authority Overview", icon: <FiShield /> },
+  { to: '/authority/authority-overview', label: "Authorities Overview", icon: <FiShield /> },
   { to: '/authority/analytics', label: "Reports & Analytics", icon: <FiBarChart2 /> },
 ];
 
 export default function Sidebar() {
   const location = useLocation();
-  const navigate = useNavigate(); // 2. Initialize the navigate function
+  const navigate = useNavigate();
 
-  // 3. Create a function to handle the logout action
   const handleLogout = () => {
-    // In a real app, you would clear user session/token here
     console.log("Logging out...");
-    navigate('/'); // Navigate to the landing page
+    navigate('/');
   };
 
   return (
@@ -48,7 +49,6 @@ export default function Sidebar() {
           <FiHelpCircle className="text-lg" />
           <span className="text-sm font-medium">Help / Support</span>
         </button>
-        {/* 4. Add the onClick handler to the logout button */}
         <button 
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-blue-800/70 text-blue-100"
