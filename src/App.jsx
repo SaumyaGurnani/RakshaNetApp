@@ -1,15 +1,24 @@
 // src/App.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar_main from "./components/Navbar_main";
 import Carousel from "./components/Carousel";
 import EmergencyMarquee from "./components/EmergencyMarquee";
-import { MessageCircle, Home, AlertTriangle, Map, Users, Phone } from "lucide-react";
+import { MessageCircle, Home, AlertTriangle, Map, Phone } from "lucide-react";
+import ChatbotModal from "./components/ChatbotModal";
+import { LANG } from './i18n';
 
-function App() {
+export default function App() {
   const [isHindi, setIsHindi] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLanguageChange = (hindi) => setIsHindi(hindi);
-
+  
+  const handleSosClick = () => {
+    navigate('/sos');
+  };
+  
   const content = {
     english: {
       menuItems: [
@@ -19,18 +28,6 @@ function App() {
       ],
       sosButton: "SOS - Emergency",
       emergencyContacts: "Emergency Contacts",
-      dashboardCards: {
-        alerts: { title: "Active Alerts", desc: "High, Medium" },
-        teams: { title: "Response Teams", desc: "Currently Deployed" },
-        rescued: { title: "People Rescued", desc: "Last 24 hours" },
-        camps: { title: "Relief Camps", desc: "Operational" }
-      },
-      currentStatus: "Current Disaster Status",
-      statusItems: [
-        { title: "Cyclone Warning", desc: "Eastern Coast - Odisha & Andhra Pradesh", level: "HIGH" },
-        { title: "Heavy Rainfall Alert", desc: "Kerala, Karnataka - Next 48 hours", level: "MEDIUM" },
-        { title: "Flood Monitoring", desc: "River levels - Yamuna, Ganga systems", level: "WATCH" }
-      ],
       liveUpdates: "Live Updates",
       updates: [
         { type: "Weather Alert", msg: "Cyclone Biparjoy moving towards Gujarat coast", time: "15 mins ago" },
@@ -47,18 +44,6 @@ function App() {
       ],
       sosButton: "एसओएस - आपातकाल",
       emergencyContacts: "आपातकालीन संपर्क",
-      dashboardCards: {
-        alerts: { title: "सक्रिय अलर्ट", desc: "उच्च, मध्यम" },
-        teams: { title: "प्रतिक्रिया दल", desc: "वर्तमान में तैनात" },
-        rescued: { title: "बचाए गए लोग", desc: "पिछले 24 घंटे" },
-        camps: { title: "राहत शिविर", desc: "परिचालन में" }
-      },
-      currentStatus: "वर्तमान आपदा स्थिति",
-      statusItems: [
-        { title: "चक्रवात चेतावनी", desc: "पूर्वी तट - ओडिशा और आंध्र प्रदेश", level: "उच्च" },
-        { title: "भारी बारिश अलर्ट", desc: "केरल, कर्नाटक - अगले 48 घंटे", level: "मध्यम" },
-        { title: "बाढ़ निगरानी", desc: "नदी स्तर - यमुना, गंगा सिस्टम", level: "निगरानी" }
-      ],
       liveUpdates: "लाइव अपडेट",
       updates: [
         { type: "मौसम अलर्ट", msg: "चक्रवात बिपरजॉय गुजरात तट की ओर बढ़ रहा", time: "15 मिनट पहले" },
@@ -72,21 +57,20 @@ function App() {
   const current = isHindi ? content.hindi : content.english;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50 relative">
       <Navbar_main onLanguageChange={handleLanguageChange} />
       <EmergencyMarquee isHindi={isHindi} />
 
       <div className="flex flex-1">
-        {/* Left Sidebar */}
         <aside className="w-64 bg-blue-900 shadow-lg flex flex-col">
-          {/* SOS Button */}
           <div className="p-4">
-            <button className="w-full py-3 bg-red-700 hover:bg-red-800 rounded font-bold text-lg transition-colors">
+            <button 
+              onClick={handleSosClick}
+              className="w-full py-3 bg-red-700 hover:bg-red-800 rounded font-bold text-lg transition-colors"
+            >
               🆘 {current.sosButton}
             </button>
           </div>
-
-          {/* Sidebar Menu */}
           <div className="p-4 space-y-2">
             {current.menuItems.map((item, index) => {
               const Icon = item.icon;
@@ -105,8 +89,6 @@ function App() {
               );
             })}
           </div>
-
-          {/* Emergency Contacts */}
           <div className="mt-auto p-4 bg-blue-900 text-white">
             <h3 className="font-semibold mb-2 flex items-center gap-2">
               <Phone className="h-4 w-4" />
@@ -120,14 +102,12 @@ function App() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 p-6">
           <Carousel />
         </main>
 
-        {/* Right Panel - Only Live Updates */}
         <aside className="w-80 bg-white shadow-lg border-l border-gray-200">
-          <div className="p-6">
+           <div className="p-6">
             <h2 className="text-lg font-bold mb-4 text-gray-800 border-b pb-2">{current.liveUpdates}</h2>
             <div className="space-y-4">
               {current.updates.map((update, index) => (
@@ -141,8 +121,21 @@ function App() {
           </div>
         </aside>
       </div>
+
+      <button
+        onClick={() => setIsChatbotOpen(true)}
+        className="fixed bottom-6 right-6 bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transition-transform transform hover:scale-110"
+        aria-label="Open Chatbot"
+      >
+        <MessageCircle size={32} />
+      </button>
+
+      <ChatbotModal
+        isChatbotOpen={isChatbotOpen}
+        closeChatbot={() => setIsChatbotOpen(false)}
+        initialMessage="Welcome to the RakshaNet assistant. How can I help you today?"
+        lang={isHindi ? LANG.HI : LANG.EN}
+      />
     </div>
   );
 }
-
-export default App;
