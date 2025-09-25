@@ -36,8 +36,31 @@ const ChatbotModal = ({ isChatbotOpen, closeChatbot, initialMessage, lang = LANG
         }
     }, [messages, autoSpeak, replyLang, lang]);
 
-    const initRecognition = () => { /* ... function remains the same ... */ };
-    const handleMicToggle = () => { /* ... function remains the same ... */ };
+    const initRecognition = () => {  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) return null;
+        const recog = new SR();
+        // Let browser auto-detect as much as possible. If needed, set default to Hindi UI language.
+        recog.lang = lang === LANG.HI ? 'hi-IN' : 'en-IN';
+        recog.interimResults = false;
+        recog.maxAlternatives = 1;
+        recog.onresult = (e) => {
+            const transcript = e.results[0][0].transcript;
+            setInput(prev => (prev ? prev + ' ' : '') + transcript);
+            setReplyLang(containsDevanagari(transcript) ? 'hi' : 'en');
+        };
+        recog.onerror = () => setIsListening(false);
+        recog.onend = () => setIsListening(false);
+        return recog;};
+    const handleMicToggle = () => {  if (isListening) {
+            recognitionRef.current && recognitionRef.current.stop();
+            setIsListening(false);
+            return;
+        }
+        const recog = initRecognition();
+        if (!recog) return;
+        recognitionRef.current = recog;
+        setIsListening(true);
+        recog.start(); };
 
     const handleSend = async () => {
         if (!input.trim()) return;
