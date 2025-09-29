@@ -8,7 +8,7 @@ const requestSchema=new mongoose.Schema({
     },
     toAuthority: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'AuthorityProfile',
+        ref: 'AuthorityPr ofile',
         required: true
     },
     urgency: {

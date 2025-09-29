@@ -1,16 +1,15 @@
-// src/components/Sidebar.jsx
-
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiUser } from "react-icons/fi";
+import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiUser, FiNavigation2 } from "react-icons/fi";
 
 const menuItems = [
   { to: '/authority', label: "Dashboard", icon: <FiHome /> },
   { to: '/authority/authority-panel', label: "Authority Panel", icon: <FiUser /> },
   { to: '/authority/ongoing-ops', label: "Ongoing Operations", icon: <FiActivity /> },
   { to: '/authority/map-view', label: "Map View", icon: <FiMap /> },
+  { to: '/authority/route-optimization', label: "Route Optimization", icon: <FiNavigation2 /> },
   { to: '/authority/authority-overview', label: "Authority Overview", icon: <FiShield /> },
-  { to: '/authority/analytics', label: "Reports & Analytics", icon: <FiBarChart2 /> },
+  { to: '/authority/analytics', label: "Resource Tracking", icon: <FiBarChart2 /> },
 ];
 
 export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {

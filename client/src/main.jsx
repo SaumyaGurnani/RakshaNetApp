@@ -14,7 +14,8 @@ import AuthorityMapView from './pages/authorityView/mapView.jsx';
 import AuthorityOngoingOps from './pages/authorityView/ongoingOperations.jsx';
 import AuthorityOverview from './pages/authorityView/authoritiesOverview.jsx';
 import AuthorityPanel from './pages/authorityView/authorityPanel.jsx';
-import Login from './components/LoginPage.jsx';   // ✅ Import Login
+import Login from './components/LoginPage.jsx';
+import RouteOptimization from './pages/authorityView/RouteOptimization.jsx';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -25,7 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/sos" element={<SOSPage />} />
         <Route path="/about" element={<AboutUsPage />} />
         <Route path="/alerts" element={<EmergencyContactsPage />} />
-        <Route path="/login" element={<Login />} />   {/* ✅ Added login route */}
+        <Route path="/login" element={<Login />} />
 
         <Route path="/authority" element={<AuthorityLayout />}>
           <Route index element={<HomeDashboard />} />
@@ -34,6 +35,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="map-view" element={<AuthorityMapView />} />
           <Route path="ongoing-ops" element={<AuthorityOngoingOps />} />
           <Route path="authority-overview" element={<AuthorityOverview />} />
+          <Route path="route-optimization" element={<RouteOptimization />} />
         </Route>
       </Routes>
     </BrowserRouter>

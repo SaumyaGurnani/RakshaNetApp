@@ -1,126 +1,83 @@
-import { SosRequest } from '../models/sosRequest.models.js';
+import { SosRequest } from '../models/SosRequest.js';
 
-
+// ==========================================================
+// 1. Controller for Generating a New SOS Request (CREATE)
+// HTTP Method: POST /api/sos
+// ==========================================================
 export const createSosRequest = async (req, res) => {
-    try {
-        const { latitude, longitude, urgency_level, members, disaster_type } = req.body;
+    const { latitude, longitude, urgency_level, members, disaster_type } = req.body;
 
-        if (!latitude || !longitude) {
-             return res.status(400).json({ error: 'Location coordinates are mandatory.' });
-        }
-        
-        // Calculate the objective priority score
-        const deemed_priority = calculateDeemedPriority(urgency_level, members, disaster_type);
-        
-        const newSOS = new SosRequest({
-            latitude, longitude, urgency_level, members, disaster_type,
-            deemed_priority, // Saved for sorting
-            status: 'Pending'
-            // district_id defaults to 'KL-EKM'
+    if (latitude === undefined || longitude === undefined) {
+        return res.status(400).json({ 
+            message: "Both latitude and longitude are mandatory to create an SOS request." 
+        });
+    }
+
+    try {
+        const newSosRequest = await SosRequest.create({
+            latitude,
+            longitude,
+            urgency_level, // Defaults to 'Critical'
+            members,       // Defaults to 1
+            disaster_type, // Defaults to 'Other'
+            // status is auto-set to 'Pending' by the schema default
         });
 
-        await newSOS.save();
-        
-        // Output: Alert appears on the district dashboard with priority level.
-        res.status(201).json({ 
-            message: 'SOS successfully logged.', 
-            sosId: newSOS._id,
-            priority: newSOS.deemed_priority
+        // Respond with 201 Created status
+        res.status(201).json({
+            message: "New SOS request generated successfully. Status: Pending.",
+            data: newSosRequest
         });
 
-    } catch (err) {
-        res.status(400).json({ error: 'Validation Error: ' + err.message });
+    } catch (error) {
+        handleMongooseError(res, error);
     }
 };
 
-
-// ====================================================================
-// Controller 2: READ PENDING (DEO Dashboard View) - Step 2: Assess Situation
-// ====================================================================
-export const getAllPendingSos = async (req, res) => {
-    // Requires DEO role authentication (handled in routes middleware)
+// ==========================================================
+// 2. Controller for Retrieving ALL Pending SOS Requests (READ/QUERY)
+// HTTP Method: GET /api/sos/pending
+// ==========================================================
+export const getPendingSosRequests = async (req, res) => {
     try {
-        // Use the district_id from the authenticated user (mocked in routes as KL-EKM)
-        const districtId = req.user?.district_id || 'KL-EKM'; 
+        // Find all requests where status is 'Pending', 'Assigned', or 'Rescuing'
+        // This is a common way to fetch ALL ACTIVE incidents for a dashboard.
+        const activeStatuses = ['Pending', 'Assigned', 'Rescuing'];
+        const pendingRequests = await SosRequest.find({ status: { $in: activeStatuses } })
+                                               .sort({ createdAt: -1 }) // Sort by newest first
+                                               .select('-__v'); 
 
-        const pendingSOS = await SosRequest.find({
-            status: { $in: ['Pending', 'Assigned', 'Rescuing'] },
-            district_id: districtId // Filter data by the DEO's operational area
-        })
-        .sort({ deemed_priority: -1, createdAt: 1 }) // CRUCIAL: Sort by highest priority first
-        .limit(100); 
+        res.status(200).json({
+            message: "Active (Pending, Assigned, or Rescuing) SOS requests retrieved.",
+            count: pendingRequests.length,
+            data: pendingRequests
+        });
 
-        res.json(pendingSOS);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch pending SOS list.' });
+    } catch (error) {
+        handleMongooseError(res, error);
     }
 };
 
+// ==========================================================
+// 3. Controller for Retrieving Single SOS Request Details (READ)
+// HTTP Method: GET /api/sos/:id
+// ==========================================================
+export const getSosRequestDetails = async (req, res) => {
+    const { id } = req.params;
 
-// ====================================================================
-// Controller 3: UPDATE ASSIGNMENT (DEO Action) - Step 3: Deploy Rescue Teams
-// ====================================================================
-export const assignTeamToSos = async (req, res) => {
-    // Requires DEO role authentication
     try {
-        const sosId = req.params.id;
-        const { assigned_team_id } = req.body; 
+        const sosRequest = await SosRequest.findById(id).select('-__v');
 
-        if (!assigned_team_id) {
-            return res.status(400).json({ error: 'Team ID is required for assignment.' });
+        if (!sosRequest) {
+            return res.status(404).json({ message: "SOS Request details not found with the given ID." });
         }
 
-        const updatedSOS = await SosRequest.findOneAndUpdate(
-            { _id: sosId, status: 'Pending' }, // Find by ID and ensure it hasn't been assigned yet
-            { 
-                $set: { 
-                    assigned_team_id: assigned_team_id,
-                    status: 'Assigned' 
-                }
-            },
-            { new: true } 
-        );
+        res.status(200).json({
+            message: "SOS Request details retrieved successfully.",
+            data: sosRequest
+        });
 
-        if (!updatedSOS) {
-            return res.status(404).json({ error: 'SOS not found or already assigned/fulfilled.' });
-        }
-
-        res.json({ message: `SOS assigned to ${assigned_team_id}.`, sos: updatedSOS });
-
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to assign team.' });
-    }
-};
-
-
-// ====================================================================
-// Controller 4: UPDATE STATUS (Team Action) - Step 4: Monitor & Update
-// ====================================================================
-export const updateSosStatus = async (req, res) => {
-    // Requires Team role authentication
-    try {
-        const sosId = req.params.id;
-        const { status } = req.body; 
-        
-        if (!['Rescuing', 'Fulfilled', 'Cancelled'].includes(status)) {
-            return res.status(400).json({ error: 'Invalid status update. Must be Rescuing, Fulfilled, or Cancelled.' });
-        }
-        
-        const updateFields = { status };
-
-        const updatedSOS = await SosRequest.findOneAndUpdate(
-            { _id: sosId },
-            { $set: updateFields },
-            { new: true }
-        );
-
-        if (!updatedSOS) {
-            return res.status(404).json({ error: 'SOS not found.' });
-        }
-
-        res.json({ message: `Status updated to ${status}.`, sos: updatedSOS });
-
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to update status.' });
+    } catch (error) {
+        handleMongooseError(res, error);
     }
 };
