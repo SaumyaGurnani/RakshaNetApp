@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/nominatim/:path*",
+      "destination": "/api/nominatim"
+    },
+    {
+      "source": "/api/osrm/:path*",
+      "destination": "/api/osrm"
+    }
+  ]
+}
