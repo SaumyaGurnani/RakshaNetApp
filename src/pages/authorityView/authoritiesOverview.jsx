@@ -22,7 +22,7 @@ export default function AuthorityOverview() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-slate-800">All Authorities Overview</h1>
       
-      <div className="bg-white p-6 rounded-xl border border-slate-200">
+      <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -38,16 +38,16 @@ export default function AuthorityOverview() {
             <tbody className="divide-y divide-slate-100">
               {allUnitsData.map((unit) => (
                 <tr key={unit.id} className="text-slate-700 hover:bg-slate-50">
-                  <td className="py-4 px-4 font-medium text-slate-800">{unit.id}</td>
-                  <td className="py-4 px-4">{unit.area}</td>
+                  <td className="py-4 px-4 font-medium text-slate-800 whitespace-nowrap">{unit.id}</td>
+                  <td className="py-4 px-4 whitespace-nowrap">{unit.area}</td>
                   <td className="py-4 px-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusClass(unit.status)}`}>
                       {unit.status}
                     </span>
                   </td>
-                  <td className="py-4 px-4">{unit.onOperation}</td>
+                  <td className="py-4 px-4 whitespace-nowrap">{unit.onOperation}</td>
                   <td className="py-4 px-4 text-center font-semibold">{unit.personnel}</td>
-                  <td className="py-4 px-4">
+                  <td className="py-4 px-4 whitespace-nowrap">
                     <button className="text-blue-600 hover:underline">Contact</button>
                   </td>
                 </tr>

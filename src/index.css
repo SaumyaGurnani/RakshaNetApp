@@ -5,6 +5,8 @@
 body { 
   background-color: rgb(243 244 246); /* bg-gray-100 */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* --- ADD THESE STYLES --- */
@@ -24,4 +26,8 @@ body {
 
 .animate-marquee-emergency {
   animation: marquee-emergency 45s linear infinite;
+}
+
+.sidebar {
+    transition: transform 0.3s ease-in-out;
 }
