@@ -1,15 +1,11 @@
 // src/App.jsx
-<<<<<<< HEAD
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-=======
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
 import Navbar from "./components/Navbar";
 import Carousel from "./components/Carousel";
 import EmergencyMarquee from "./components/EmergencyMarquee";
+import Login from "./components/LoginPage";
 import ChatbotModal from "./components/ChatbotModal";
 import WelcomeModal from "./components/WelcomeModal";
 import AboutUs from "./components/AboutUs";
@@ -25,25 +21,16 @@ import {
   Headphones,
   FileText,
   Satellite,
-<<<<<<< HEAD
-  Menu, // Import Menu icon
-  X // Import X icon
-=======
   Info,
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
 } from "lucide-react";
-import { useAuth } from "./contexts/AuthContext.jsx";
 
 function App() {
-  const { currentUser, logout } = useAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [isHindi, setIsHindi] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-<<<<<<< HEAD
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for sidebar
-=======
   const [showLoginPage, setShowLoginPage] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -59,12 +46,6 @@ function App() {
     sessionStorage.setItem('welcomeModalShown', 'true');
   };
 
-<<<<<<< HEAD
-  // Handle logout
-  const handleLogout = () => {
-    logout();
-    navigate('/'); // Redirect to home/login page
-=======
   const handleLogin = (userInfo) => {
     setUserData(userInfo);
     setIsLoggedIn(true);
@@ -82,7 +63,6 @@ function App() {
     setIsLoggedIn(false);
     setUserData(null);
     navigate('/');
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
   };
 
   const handleLanguageChange = (hindi) => {
@@ -93,14 +73,10 @@ function App() {
     navigate('/sos');
   };
 
-<<<<<<< HEAD
-  // Main dashboard content (existing code) - Only for non-authority users
-=======
   if (showLoginPage) {
     return <Login onLogin={handleLogin} />;
   }
 
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
   const content = {
     english: {
       menuItems: [
@@ -188,61 +164,19 @@ function App() {
       <Navbar
         isHindi={isHindi}
         onLanguageChange={handleLanguageChange}
-        userData={currentUser}
+        userData={userData}
         onLogout={handleLogout}
-<<<<<<< HEAD
-        onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} // Pass menu click handler
-=======
         onShowLogin={() => setShowLoginPage(true)}
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
       />
       <EmergencyMarquee isHindi={isHindi} />
 
       <div className="flex flex-1">
-<<<<<<< HEAD
-        {/* Left Sidebar */}
-        <aside className={`fixed z-20 inset-y-0 left-0 w-64 bg-blue-900 shadow-lg flex flex-col transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out sidebar`}>
-          {/* Close button for mobile */}
-          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden absolute top-4 right-4 text-white">
-              <X size={24}/>
-          </button>
-          
-          {/* User Info Section */}
-          {currentUser && (
-            <div className="p-4 bg-blue-800 text-white border-b border-blue-700 mt-10 md:mt-0">
-              <div className="text-sm opacity-90">
-                {isHindi ? "स्वागत" : "Welcome"}
-              </div>
-              <div className="font-semibold">
-                {currentUser.name || currentUser.email}
-              </div>
-              <div className="text-xs opacity-75 capitalize">
-                {currentUser.userType === "citizen"
-                  ? isHindi
-                    ? "नागरिक"
-                    : "Citizen"
-                  : currentUser.userType === "authority"
-                  ? isHindi
-                    ? "प्राधिकरण"
-                    : "Authority"
-                  : currentUser.userType === "volunteer"
-                  ? isHindi
-                    ? "स्वयंसेवक"
-                    : "Volunteer"
-                  : currentUser.userType === "ngo"
-                  ? isHindi
-                    ? "एनजीओ"
-                    : "NGO"
-                  : currentUser.userType}
-              </div>
-=======
         <aside className="w-64 bg-blue-900 shadow-lg flex flex-col">
           {userData && (
             <div className="p-4 bg-blue-800 text-white border-b border-blue-700">
               <div className="text-sm opacity-90">{isHindi ? "स्वागत" : "Welcome"}</div>
               <div className="font-semibold">{userData.name || userData.email}</div>
               <div className="text-xs opacity-75 capitalize">{userData.userType}</div>
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
             </div>
           )}
 
@@ -276,18 +210,6 @@ function App() {
           </div>
         </aside>
 
-<<<<<<< HEAD
-        {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 space-y-6">
-          <Carousel />
-
-          {/* Satellite Images Section */}
-          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-            <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-              <Satellite className="h-6 w-6 text-blue-600" />
-              {current.satelliteImages}
-            </h2>
-=======
         <main className="flex-1 p-6 space-y-6">
           <Carousel />
           
@@ -304,7 +226,6 @@ function App() {
                 <span className="font-medium">{isHindi ? "लाइव डेटा" : "Live Data"}</span>
               </div>
             </div>
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {current.satelliteData.map((satellite, index) => (
                 <div
@@ -356,12 +277,7 @@ function App() {
           </div>
         </main>
 
-<<<<<<< HEAD
-        {/* Right Panel - Live Updates */}
-        <aside className="hidden lg:block w-80 bg-white shadow-lg border-l border-gray-200">
-=======
         <aside className="w-80 bg-white shadow-lg border-l border-gray-200">
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
           <div className="p-6">
             <h2 className="text-lg font-bold mb-4 text-gray-800 border-b pb-2">
               {current.liveUpdates}
@@ -384,7 +300,7 @@ function App() {
 
       <button
         onClick={() => setIsChatbotOpen(true)}
-        className="fixed bottom-6 right-6 bg-green-600 text-white w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transition-transform transform hover:scale-110"
+        className="fixed bottom-6 right-6 bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transition-transform transform hover:scale-110"
         aria-label="Open Chatbot"
       >
         <MessageCircle size={32} />

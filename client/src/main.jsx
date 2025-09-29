@@ -14,42 +14,11 @@ import AuthorityMapView from './pages/authorityView/mapView.jsx';
 import AuthorityOngoingOps from './pages/authorityView/ongoingOperations.jsx';
 import AuthorityOverview from './pages/authorityView/authoritiesOverview.jsx';
 import AuthorityPanel from './pages/authorityView/authorityPanel.jsx';
-<<<<<<< HEAD
-import LoginPage from './components/LoginPage.jsx';
-import { AuthProvider } from './contexts/AuthContext.jsx';
-=======
 import Login from './components/LoginPage.jsx';   // ✅ Import Login
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-<<<<<<< HEAD
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Main app route - shows citizen dashboard */}
-          <Route path="/" element={<App />} />
-          
-          {/* Login page route */}
-          <Route path="/login" element={<LoginPage />} />
-          
-          {/* SOS page route */}
-          <Route path="/sos" element={<SOSPage />} />
-          
-          {/* Authority routes */}
-          <Route path="/authority" element={<AuthorityLayout />}>
-            <Route index element={<HomeDashboard />} />
-            <Route path="authority-panel" element={<AuthorityPanel />} />
-            <Route path="analytics" element={<AuthorityAnalytics />} />
-            <Route path="map-view" element={<AuthorityMapView />} />
-            <Route path="ongoing-ops" element={<AuthorityOngoingOps />} />
-            <Route path="authority-overview" element={<AuthorityOverview />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-=======
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
@@ -68,6 +37,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </Route>
       </Routes>
     </BrowserRouter>
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
   </React.StrictMode>,
 );

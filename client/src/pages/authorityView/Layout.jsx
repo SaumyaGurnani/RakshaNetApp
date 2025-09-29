@@ -1,19 +1,11 @@
-// src/pages/authorityView/Layout.jsx
-
 import React, { useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import AlertMarquee from "../../components/AlertMarquee";
-import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export default function AuthorityLayout() {
   const [isHindi, setIsHindi] = useState(false);
-<<<<<<< HEAD
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
-=======
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,10 +18,13 @@ export default function AuthorityLayout() {
     department: "National Disaster Response Force",
     jurisdiction: "Delhi NCR"
   };
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
 
   const handleLogout = () => {
-    logout();
+    // Clear any stored user data
+    localStorage.removeItem('userData');
+    sessionStorage.removeItem('userData');
+    
+    // Navigate back to login
     navigate('/');
   };
 
@@ -41,21 +36,8 @@ export default function AuthorityLayout() {
     <div className="h-screen bg-slate-100 flex flex-col">
       <Navbar 
         onLanguageChange={handleLanguageChange}
-        userData={currentUser}
+        userData={userData}
         onLogout={handleLogout}
-<<<<<<< HEAD
-        onMenuClick={() => setSidebarOpen(!isSidebarOpen)}
-      />
-      <AlertMarquee isHindi={isHindi} />
-      <div className="flex flex-1 overflow-hidden">
-        
-        {/* Sidebar Container: Increased z-index to 50 */}
-        <div className={`fixed md:relative inset-y-0 left-0 z-50 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out`}>
-            <Sidebar />
-        </div>
-
-        <main className="flex-1 p-6 space-y-6 overflow-y-auto">
-=======
         onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
         isAuthorityView={true}
       />
@@ -63,18 +45,9 @@ export default function AuthorityLayout() {
       <div className="flex flex-1 overflow-hidden relative">
         <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
         <main className={`flex-1 overflow-y-auto ${isMapView ? '' : 'p-4 sm:p-6 space-y-6'}`}>
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
           <Outlet />
         </main>
       </div>
-      
-      {/* Overlay: Increased z-index to 40 */}
-      {isSidebarOpen && (
-        <div
-            className="md:hidden fixed inset-0 bg-black opacity-50 z-40"
-            onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
     </div>
   );
 }

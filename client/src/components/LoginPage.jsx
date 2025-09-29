@@ -8,10 +8,8 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/config"; // Adjust path as needed
-import { useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
-  const navigate = useNavigate();
+export default function LoginPage({ onLogin }) {
   const [isHindi, setIsHindi] = useState(true);
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState('citizen');
@@ -192,12 +190,14 @@ export default function LoginPage() {
       
       const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
       
-      if (userDoc.exists() && userDoc.data().userType === 'authority') {
-        navigate('/authority');
+      let userData;
+      if (userDoc.exists()) {
+        userData = {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          ...userDoc.data()
+        };
       } else {
-<<<<<<< HEAD
-        navigate('/');
-=======
         // Fallback if user exists in Auth but not Firestore
         userData = {
           uid: userCredential.user.uid,
@@ -205,8 +205,9 @@ export default function LoginPage() {
           name: userCredential.user.email,
           userType: 'citizen' 
         };
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
       }
+
+      onLogin(userData);
       
     } catch (err) {
       console.error("Login error:", err);
@@ -266,12 +267,7 @@ export default function LoginPage() {
       };
 
       await setDoc(doc(db, 'users', userCredential.user.uid), userData);
-      
-      if (userData.userType === 'authority') {
-        navigate('/authority');
-      } else {
-        navigate('/');
-      }
+      onLogin(userData);
 
     } catch (err) {
       console.error("Registration error:", err);
@@ -434,41 +430,41 @@ export default function LoginPage() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200 p-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 sm:gap-6">
-            <img src="/indian-emblem.png" alt="Indian Emblem" className="h-12 sm:h-16" onError={(e) => e.target.style.display = 'none'} />
-            <div className="hidden sm:flex items-center gap-2">
+          <div className="flex items-center gap-6">
+            <img src="/indian-emblem.png" alt="Indian Emblem" className="h-16" onError={(e) => e.target.style.display = 'none'} />
+            <div className="flex items-center gap-2">
               <div className="w-12 h-1 bg-orange-500"></div>
               <div className="w-8 h-1 bg-white border border-gray-300"></div>
               <div className="w-6 h-1 bg-green-600"></div>
             </div>
           </div>
           <div className="text-center">
-            <div className="text-xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-4">
-              <img src="/government-logo.png" alt="Government Logo" className="h-10 sm:h-12" onError={(e) => e.target.style.display = 'none'} />
+            <div className="text-3xl font-bold flex items-center gap-4">
+              <img src="/government-logo.png" alt="Government Logo" className="h-12" onError={(e) => e.target.style.display = 'none'} />
               <div className="flex items-center gap-2">
-                <span className="text-orange-600">रक्षाNet</span>
+                <span className="text-orange-600">रक्षानेत</span>
                 <span className="text-gray-600">-</span>
                 <span className="text-blue-700">RakshaNet</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setIsHindi(!isHindi)}
               className="flex items-center gap-2 px-3 py-2 border border-blue-600 text-blue-700 rounded hover:bg-blue-50 transition-colors"
             >
               <Globe className="h-4 w-4" />
-              <span className="hidden sm:inline">{isHindi ? "English" : "हिंदी"}</span>
+              {isHindi ? "English" : "हिंदी"}
             </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
-        <div className="bg-white rounded shadow-lg w-full max-w-5xl flex flex-col lg:flex-row overflow-hidden border border-gray-200">
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="bg-white rounded shadow-lg w-full max-w-5xl flex overflow-hidden border border-gray-200">
           {/* Left Side - Login */}
-          <div className="w-full lg:w-1/2 p-6 sm:p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
+          <div className="w-1/2 p-8 border-r border-gray-200">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               {current.loginTitle}
             </h2>
@@ -555,7 +551,7 @@ export default function LoginPage() {
           </div>
 
           {/* Right Side - Registration */}
-          <div className="w-full lg:w-1/2 bg-gray-50 p-6 sm:p-8">
+          <div className="w-1/2 bg-gray-50 p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               {current.signupTitle}
             </h2>

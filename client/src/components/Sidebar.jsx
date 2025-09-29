@@ -3,7 +3,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiHome, FiMap, FiBarChart2, FiHelpCircle, FiLogOut, FiActivity, FiShield, FiUser } from "react-icons/fi";
-import { useAuth } from "../contexts/AuthContext.jsx";
 
 const menuItems = [
   { to: '/authority', label: "Dashboard", icon: <FiHome /> },
@@ -17,18 +16,10 @@ const menuItems = [
 export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   const location = useLocation();
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    logout(); // Call the actual logout function from context
-    navigate('/'); // Navigate to the landing page
-=======
 
   const handleLogout = () => {
     console.log("Logging out...");
     navigate('/');
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
   };
 
   return (
@@ -54,22 +45,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
           ))}
         </nav>
 
-<<<<<<< HEAD
-      <div className="px-3 py-4 border-t border-blue-800 space-y-1">
-        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-blue-800/70 text-blue-100">
-          <FiHelpCircle className="text-lg" />
-          <span className="text-sm font-medium">Help / Support</span>
-        </button>
-        <button 
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-blue-800/70 text-blue-100"
-        >
-          <FiLogOut className="text-lg" />
-          <span className="text-sm font-medium">Logout</span>
-        </button>
-      </div>
-    </aside>
-=======
         <div className="px-3 py-4 border-t border-blue-800 space-y-1">
           <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-blue-800/70 text-blue-100">
             <FiHelpCircle className="text-lg" />
@@ -91,7 +66,5 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         ></div>
       )}
     </>
->>>>>>> d6dffc0295e08ae1c7e7ea14a36561beb2cb112f
   );
 }
-
