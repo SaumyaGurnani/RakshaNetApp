@@ -8,7 +8,7 @@ const initialRequests = [
     type: "Medical",
     victim_name: "John Doe",
     location: { address: "123 Maple St, Anytown" },
-    status: "Unassigned",
+    status: "New",
     timestamp: new Date(Date.now() - 3600000).toISOString(),
     resources_needed: ["Ambulance", "EMT Team"]
   },
@@ -18,7 +18,7 @@ const initialRequests = [
     type: "Police",
     victim_name: "Jane Smith",
     location: { address: "456 Oak Ave, Anytown" },
-    status: "In Progress",
+    status: "Assigned",
     timestamp: new Date(Date.now() - 7200000).toISOString(),
     resources_needed: ["Police Patrol", "SWAT Team"]
   },
@@ -38,7 +38,7 @@ const initialRequests = [
     type: "Assault",
     victim_name: "Victim Anonymous",
     location: { address: "101 Elm Blvd, Anytown" },
-    status: "Unassigned",
+    status: "New",
     timestamp: new Date().toISOString(),
     resources_needed: ["Police Patrol", "K-9 Unit"]
   },
@@ -68,7 +68,7 @@ const initialRequests = [
     type: "Police",
     victim_name: "John Smith",
     location: { address: "223 Oak Rd, Anytown" },
-    status: "In Progress",
+    status: "Assigned",
     timestamp: new Date(Date.now() - 1800000).toISOString(), // 30 minutes ago
     resources_needed: ["Police Patrol"]
   },
@@ -78,7 +78,7 @@ const initialRequests = [
     type: "Fire",
     victim_name: "Emergency Call",
     location: { address: "333 Elm Ln, Anytown" },
-    status: "Unassigned",
+    status: "New",
     timestamp: new Date(Date.now() - 600000).toISOString(), // 10 minutes ago
     resources_needed: ["Fire Truck", "Rescue Ladder"]
   },
@@ -89,14 +89,7 @@ const AuthorityPanel = () => {
   const [requests, setRequests] = useState(initialRequests);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-
-  const handleAssign = (id) => {
-    setRequests(
-      requests.map((req) =>
-        req.request_id === id ? { ...req, status: "In Progress" } : req
-      )
-    );
-  };
+  const [notification, setNotification] = useState("");
 
   const handleFulfill = (id) => {
     setRequests(
@@ -104,8 +97,36 @@ const AuthorityPanel = () => {
         req.request_id === id ? { ...req, status: "Fulfilled" } : req
       )
     );
+    setNotification("Request Fulfilled!");
+    setTimeout(() => setNotification(""), 3000);
   };
 
+  // State for the modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+
+  // Function to open the modal
+  const handleAssignClick = (request) => {
+    setSelectedRequest(request);
+    setIsModalOpen(true);
+  };
+
+  // Function to close the modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedRequest(null);
+  };
+
+  // Function to handle the assignment from the modal
+  const handleAssignRequest = (assignmentDetails) => {
+    console.log("Assigning request:", selectedRequest.request_id, "with details:", assignmentDetails);
+    setRequests(
+        requests.map((req) =>
+          req.request_id === selectedRequest.request_id ? { ...req, status: "Assigned" } : req
+        )
+      );
+    handleCloseModal();
+  };
   const filteredRequests = requests.filter((req) => {
     const matchesSearch =
       req.request_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -114,7 +135,7 @@ const AuthorityPanel = () => {
     const matchesTab =
       activeTab === "All" ||
       (activeTab === "New" && req.status === "New") ||
-      (activeTab === "Pending" && req.status === "In Progress") ||
+      (activeTab === "Assigned" && req.status === "Assigned") ||
       (activeTab === "Fulfilled" && req.status === "Fulfilled");
     return matchesSearch && matchesTab;
   });
@@ -123,7 +144,7 @@ const AuthorityPanel = () => {
 
   const getStats = () => ({
     new: requests.filter((req) => req.status === "New").length,
-    pending: requests.filter((req) => req.status === "In Progress").length,
+    pending: requests.filter((req) => req.status === "Assigned").length,
     fulfilled: requests.filter((req) => req.status === "Fulfilled").length,
     critical: requests.filter((req) => req.priority === "Critical").length,
   });
@@ -141,10 +162,15 @@ const AuthorityPanel = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 font-sans antialiased">
+    {notification && (
+        <div className="fixed top-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md z-50">
+          {notification}
+        </div>
+      )}
       <header className="flex justify-between items-center p-4 bg-white shadow-lg rounded-lg">
-        <div className='flex gap-5'>
+        <div className='flex gap-5 items-center'>
+          <img src="/indian-emblem.png" alt="Indian Emblem" className="h-10"/>
           <h1 className="text-2xl text-amber-950">NDRF – Delhi Zone</h1>
-          <img src="/ndrf_logo_png.png" alt="NDRF Logo" className="h-10"/>
         </div>
         <div className="relative">
           <button className="text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -209,7 +235,7 @@ const AuthorityPanel = () => {
         {[
           { title: "Critical Requests", count: stats.critical, icon: "⚠️", color: "red" },
           { title: "New Requests", count: stats.new, icon: "🆕", color: "blue" },
-          { title: "Pending Requests", count: stats.pending, icon: "⏳", color: "yellow" },
+          { title: "Assigned Requests", count: stats.pending, icon: "⏳", color: "yellow" },
           { title: "Fulfilled Requests", count: stats.fulfilled, icon: "✅", color: "green" },
         ].map((card) => (
           <div
@@ -231,7 +257,7 @@ const AuthorityPanel = () => {
           <div className="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-lg shadow-md mb-6">
             {/* Tabs */}
             <div className="flex space-x-4 mb-4 md:mb-0">
-              {["All", "New", "Pending", "Fulfilled"].map((tab) => (
+              {["All", "New", "Assigned", "Fulfilled"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -298,9 +324,9 @@ const AuthorityPanel = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          req.status === "Unassigned"
-                            ? "bg-red-100 text-red-800"
-                            : req.status === "In Progress"
+                          req.status === "New"
+                            ? "bg-blue-100 text-blue-800"
+                            : req.status === "Assigned"
                             ? "bg-yellow-100 text-yellow-800"
                             : "bg-green-100 text-green-800"
                         }`}
@@ -309,31 +335,106 @@ const AuthorityPanel = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      {req.status === "Unassigned" && (
-                        <button
-                          onClick={() => handleAssign(req.request_id)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Assign
+                      {req.status === 'New' ? (
+                        <>
+                          <button
+                            onClick={() => handleAssignClick(req)}
+                            className="px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-md shadow-sm hover:bg-indigo-700 cursor-pointer"
+                          >
+                            Assign
+                          </button>
+                          <button
+                            onClick={() => handleFulfill(req.request_id)}
+                            className="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-md shadow-sm hover:bg-green-700 cursor-pointer"
+                          >
+                            Fulfill
+                          </button>
+                        </>
+                      ) : (
+                        <button className="px-3 py-1 bg-gray-500 text-white text-xs font-semibold rounded-md shadow-sm hover:bg-gray-600 cursor-pointer">
+                          View
                         </button>
                       )}
-                      {req.status === "In Progress" && (
-                        <button
-                          onClick={() => handleFulfill(req.request_id)}
-                          className="text-green-600 hover:text-green-900"
-                        >
-                          Fulfill
-                        </button>
-                      )}
-                      <button className="text-gray-500 hover:text-gray-700">
-                        View
-                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+      {isModalOpen && (
+        <AssignRequestModal
+          request={selectedRequest}
+          onClose={handleCloseModal}
+          onAssign={handleAssignRequest}
+        />
+      )}
+    </div>
+  );
+};
+
+// Modal Component
+const AssignRequestModal = ({ request, onClose, onAssign }) => {
+  const [authority, setAuthority] = useState('');
+  const [priority, setPriority] = useState(request.priority || 'Moderate');
+  const [notes, setNotes] = useState('');
+
+  const handleSubmit = () => {
+    onAssign({ authority, priority, notes });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
+        <div className="p-4 border-b">
+          <h2 className="text-xl font-bold">Assign Request: {request.request_id}</h2>
+        </div>
+        <div className="p-6 space-y-4">
+          <div>
+            <label htmlFor="authority" className="block text-sm font-medium text-gray-700">Assign To</label>
+            <select
+              id="authority"
+              value={authority}
+              onChange={(e) => setAuthority(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Select Authority</option>
+              <option value="District Emergency Officer">District Emergency Officer</option>
+              <option value="District Police Superintendent">District Police Superintendent</option>
+              <option value="NDRF">NDRF</option>
+              <option value="Public Works Dept">Public Works Dept</option>
+              <option value="Health Support Team">Health Support Team</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="priority" className="block text-sm font-medium text-gray-700">Priority</label>
+            <select
+              id="priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-700">Notes for Unit</label>
+            <textarea
+              id="notes"
+              rows="4"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            ></textarea>
+          </div>
+        </div>
+        <div className="p-4 border-t flex justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">Cancel</button>
+          <button onClick={handleSubmit} className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Assign</button>
         </div>
       </div>
     </div>

@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import AlertMarquee from "../../components/AlertMarquee";
 
 export default function AuthorityLayout() {
   const [isHindi, setIsHindi] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMapView = location.pathname === '/authority/map-view';
 
   // Mock user data - in a real app, this would come from context or props
   const userData = {
@@ -35,11 +38,13 @@ export default function AuthorityLayout() {
         onLanguageChange={handleLanguageChange}
         userData={userData}
         onLogout={handleLogout}
+        onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        isAuthorityView={true}
       />
       <AlertMarquee isHindi={isHindi} />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex flex-1 overflow-hidden relative">
+        <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+        <main className={`flex-1 overflow-y-auto ${isMapView ? '' : 'p-4 sm:p-6 space-y-6'}`}>
           <Outlet />
         </main>
       </div>

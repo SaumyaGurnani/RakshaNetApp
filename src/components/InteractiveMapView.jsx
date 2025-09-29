@@ -28,10 +28,24 @@ export default function InteractiveMapView() {
   };
 
   return (
-    <div className="flex h-full gap-6">
+    <div className="relative h-full w-full">
+      {/* Map Display */}
+      <MapContainer center={[28.6139, 77.2090]} zoom={12} className="h-full w-full z-0">
+        <TileLayer 
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+
+        {visibility.safeZones && safeZonesData.map((z, i) => <Polygon key={i} positions={z.path} pathOptions={{ color: 'green', fillColor: 'green', fillOpacity: 0.3 }}><Tooltip>{z.label}</Tooltip></Polygon>)}
+        {visibility.blockedZones && blockedZonesData.map((z, i) => <Polygon key={i} positions={z.path} pathOptions={{ color: 'grey', fillColor: 'grey', fillOpacity: 0.5 }}><Tooltip>{z.label}</Tooltip></Polygon>)}
+        {visibility.victimDensity && victimDensityData.map((p, i) => <CircleMarker key={i} center={[p.lat, p.lng]} radius={p.density*3} pathOptions={{ color: getDensityColor(p.density), fillColor: getDensityColor(p.density), fillOpacity: 0.6 }}><Tooltip>{p.label}</Tooltip></CircleMarker>)}
+        {visibility.sosRequests && sosRequestsData.map((p, i) => <CircleMarker key={i} center={[p.lat, p.lng]} radius={10} pathOptions={{ color: 'white', fillColor: 'red', fillOpacity: 1 }} className="animate-glow"><Tooltip>{p.details}</Tooltip></CircleMarker>)}
+        {visibility.landmarks && landmarksData.map((lm, i) => <Marker key={i} position={[lm.lat, lm.lng]} icon={createLandmarkIcon(lm.type)}><Tooltip>{lm.name}</Tooltip></Marker>)}
+      </MapContainer>
+
       {/* Controls Panel */}
-      <div className="w-60 flex-shrink-0">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 h-full">
+      <div className="absolute top-4 left-4 z-10 w-60">
+        <div className="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-slate-200 shadow-lg">
           <h3 className="font-semibold text-slate-800 mb-4 pb-2 border-b border-slate-200">Map Layers</h3>
           <div className="space-y-3">
             {layers.map(layer => (
@@ -45,37 +59,23 @@ export default function InteractiveMapView() {
         </div>
       </div>
       
-      {/* Map Display */}
-      <div className="flex-1 h-full rounded-xl border border-slate-200 bg-white p-2">
-        <MapContainer center={[28.6139, 77.2090]} zoom={12} className="h-full w-full rounded-lg z-0">
-          {/* MODIFIED: Changed to a light map theme */}
-          <TileLayer 
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-
-          {visibility.safeZones && safeZonesData.map((z, i) => <Polygon key={i} positions={z.path} pathOptions={{ color: 'green', fillColor: 'green', fillOpacity: 0.3 }}><Tooltip>{z.label}</Tooltip></Polygon>)}
-          {visibility.blockedZones && blockedZonesData.map((z, i) => <Polygon key={i} positions={z.path} pathOptions={{ color: 'grey', fillColor: 'grey', fillOpacity: 0.5 }}><Tooltip>{z.label}</Tooltip></Polygon>)}
-          {visibility.victimDensity && victimDensityData.map((p, i) => <CircleMarker key={i} center={[p.lat, p.lng]} radius={p.density*3} pathOptions={{ color: getDensityColor(p.density), fillColor: getDensityColor(p.density), fillOpacity: 0.6 }}><Tooltip>{p.label}</Tooltip></CircleMarker>)}
-          {visibility.sosRequests && sosRequestsData.map((p, i) => <CircleMarker key={i} center={[p.lat, p.lng]} radius={10} pathOptions={{ color: 'white', fillColor: 'red', fillOpacity: 1 }} className="animate-glow"><Tooltip>{p.details}</Tooltip></CircleMarker>)}
-          {visibility.landmarks && landmarksData.map((lm, i) => <Marker key={i} position={[lm.lat, lm.lng]} icon={createLandmarkIcon(lm.type)}><Tooltip>{lm.name}</Tooltip></Marker>)}
-        </MapContainer>
-        
-        {/* MODIFIED: CSS animation is now a subtle glow instead of a pulse */}
-        <style>{`
-          .animate-glow {
-            animation: glow-effect 2s infinite ease-in-out;
+      <style>{`
+        .leaflet-container {
+            height: 100%;
+            width: 100%;
+        }
+        .animate-glow {
+          animation: glow-effect 2s infinite ease-in-out;
+        }
+        @keyframes glow-effect {
+          0%, 100% {
+            box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.7);
           }
-          @keyframes glow-effect {
-            0%, 100% {
-              box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.7);
-            }
-            50% {
-              box-shadow: 0 0 12px 5px rgba(255, 0, 0, 0.7);
-            }
+          50% {
+            box-shadow: 0 0 12px 5px rgba(255, 0, 0, 0.7);
           }
-        `}</style>
-      </div>
+        }
+      `}</style>
     </div>
   );
 }
